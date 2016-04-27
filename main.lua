@@ -46,23 +46,41 @@ function load_level(index)
   return level
 end
 
-function transition_to_level(window, index, duration)
+function end_game(window)
+  window.scene.hidden = true
+end
+
+function transition_to_level(window, index)
+  local level = load_level(index)
+
+  local duration = 1
+
+  if not level then
+    duration = 5
+  end
+
+  local base_hidden_count = 1
+  local hidden_count = base_hidden_count
+
   local hidden = true
   local end_time = am.frame_time + duration
 
   window.scene:action(function(scene)
     scene.hidden = hidden
 
-    hidden = not hidden
+    hidden_count = hidden_count - 1
+
+    if hidden_count < 1 then
+      hidden = not hidden
+
+      hidden_count = base_hidden_count
+    end
 
     if am.frame_time > end_time then
-      local level = load_level(index)
-
       if level then
         start_level(window, level)
       else
-        -- TODO: Cycle the levels? Give some sort of reward?
-        window:close()
+        end_game(window)
       end
 
       return true
@@ -117,7 +135,7 @@ function start_level(window, level)
     if hold_start_time ~= nil and t - hold_start_time > 1 then
       log("level "..level.index..": complete")
 
-      transition_to_level(window, level.index + 1, 1)
+      transition_to_level(window, level.index + 1)
 
       return true
     end
