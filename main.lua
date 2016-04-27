@@ -21,14 +21,21 @@ function setup_scene()
 end
 
 function load_level(index)
-  local waves = load_json("data/waves.json")
+  -- TODO: Only load this once.
   local levels = load_json("data/levels.json")
+
+  if index > table.getn(levels) then
+    return nil
+  end
 
   local level = {
     index = index,
   }
 
   local level_waves = levels[level.index].waves
+
+  -- TODO: Only load this once.
+  local waves = load_json("data/waves.json")
 
   level.waves = {}
 
@@ -42,18 +49,42 @@ end
 function start_level(window, level, start_time)
   window.scene:action(function(scene)
     local t = am.frame_time - start_time
+
     local value = 1
+
+    local level_complete = true
+    local held_keys_remaining = table.getn(window:keys_down())
 
     for i = 1, table.getn(level.waves) do
       local wave = level.waves[i]
 
       value = value * math.sin(2 * math.pi * wave.frequency * t + wave.phase)
+
+      local key_down = window:key_down(wave.key)
+
+      if key_down then
+        held_keys_remaining = held_keys_remaining - 1
+      end
+
+      level_complete = level_complete and key_down
     end
 
     if value > 0 then
       scene.hidden = false
     else
       scene.hidden = true
+    end
+
+    if level_complete and held_keys_remaining < 1 then
+      local level = load_level(level.index + 1)
+
+      if level then
+        start_level(window, level, am.frame_time)
+      else
+        window:close()
+      end
+
+      return true
     end
   end)
 end

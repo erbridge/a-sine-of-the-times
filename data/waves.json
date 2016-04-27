@@ -8,5 +8,15 @@
     "key": "b",
     "frequency": 0.1,
     "phase": 3
+  },
+  {
+    "key": "c",
+    "frequency": 0.01,
+    "phase": 2
+  },
+  {
+    "key": "d",
+    "frequency": 0.2,
+    "phase": 3
   }
 ]
