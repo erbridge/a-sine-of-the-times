@@ -51,12 +51,14 @@ function calculate_wave_amplitude(wave, t)
 end
 
 function start_level(window, level, start_time)
+  local hold_start = nil
+
   window.scene:action(function(scene)
     local t = am.frame_time - start_time
 
     local amplitude = 1
 
-    local level_complete = true
+    local wave_keys_held = true
     local held_keys_remaining = table.getn(window:keys_down())
 
     for i = 1, table.getn(level.waves) do
@@ -67,7 +69,7 @@ function start_level(window, level, start_time)
       else
         amplitude = amplitude * calculate_wave_amplitude(wave, t)
 
-        level_complete = false
+        wave_keys_held = false
       end
     end
 
@@ -77,7 +79,17 @@ function start_level(window, level, start_time)
       scene.hidden = true
     end
 
-    if level_complete and held_keys_remaining < 1 then
+    if wave_keys_held and held_keys_remaining < 1 then
+      if hold_start == nil then
+        hold_start = t
+      end
+    else
+      hold_start = nil
+    end
+
+    if hold_start ~= nil and t - hold_start > 1 then
+      log("level complete")
+
       local level = load_level(level.index + 1)
 
       if level then
