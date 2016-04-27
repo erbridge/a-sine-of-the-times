@@ -46,6 +46,10 @@ function load_level(index)
   return level
 end
 
+function calculate_wave_amplitude(wave, t)
+  return math.sin(2 * math.pi * wave.frequency * t + wave.phase)
+end
+
 function start_level(window, level, start_time)
   window.scene:action(function(scene)
     local t = am.frame_time - start_time
@@ -61,9 +65,7 @@ function start_level(window, level, start_time)
       if window:key_down(wave.key) then
         held_keys_remaining = held_keys_remaining - 1
       else
-        wave_amplitude = math.sin(2 * math.pi * wave.frequency * t + wave.phase)
-
-        amplitude = amplitude * wave_amplitude
+        amplitude = amplitude * calculate_wave_amplitude(wave, t)
 
         level_complete = false
       end
@@ -81,6 +83,7 @@ function start_level(window, level, start_time)
       if level then
         start_level(window, level, am.frame_time)
       else
+        -- TODO: Cycle the levels? Give some sort of reward?
         window:close()
       end
 
