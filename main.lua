@@ -62,7 +62,7 @@ function calculate_wave_amplitude(wave, t)
 end
 
 function start_level(window, level, start_time)
-  log("Starting level "..level.index)
+  log("level "..level.index..": starting")
 
   local hold_start = nil
 
@@ -101,7 +101,7 @@ function start_level(window, level, start_time)
     end
 
     if hold_start ~= nil and t - hold_start > 1 then
-      log("Level "..level.index.." complete")
+      log("level "..level.index..": complete")
 
       transition_to_level(window, level.index + 1)
 
