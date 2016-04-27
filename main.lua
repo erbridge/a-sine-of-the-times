@@ -50,7 +50,7 @@ function start_level(window, level, start_time)
   window.scene:action(function(scene)
     local t = am.frame_time - start_time
 
-    local value = 1
+    local amplitude = 1
 
     local level_complete = true
     local held_keys_remaining = table.getn(window:keys_down())
@@ -58,18 +58,18 @@ function start_level(window, level, start_time)
     for i = 1, table.getn(level.waves) do
       local wave = level.waves[i]
 
-      value = value * math.sin(2 * math.pi * wave.frequency * t + wave.phase)
-
-      local key_down = window:key_down(wave.key)
-
-      if key_down then
+      if window:key_down(wave.key) then
         held_keys_remaining = held_keys_remaining - 1
-      end
+      else
+        wave_amplitude = math.sin(2 * math.pi * wave.frequency * t + wave.phase)
 
-      level_complete = level_complete and key_down
+        amplitude = amplitude * wave_amplitude
+
+        level_complete = false
+      end
     end
 
-    if value > 0 then
+    if amplitude > 0 then
       scene.hidden = false
     else
       scene.hidden = true
