@@ -1,0 +1,12 @@
+[
+  {
+    "key": "a",
+    "frequency": 0.02,
+    "phase": 1
+  },
+  {
+    "key": "b",
+    "frequency": 0.1,
+    "phase": 3
+  }
+]
