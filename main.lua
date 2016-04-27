@@ -1,3 +1,6 @@
+local LEVELS = nil
+local WAVES = nil
+
 function load_json(filename)
   local json_file = io.open(filename, "r")
   local json = json_file:read("*all")
@@ -21,10 +24,11 @@ function setup_scene()
 end
 
 function load_level(index)
-  -- TODO: Only load this once.
-  local levels = load_json("data/levels.json")
+  if LEVELS == nil then
+    LEVELS = load_json("data/levels.json")
+  end
 
-  if index > table.getn(levels) then
+  if index > table.getn(LEVELS) then
     return nil
   end
 
@@ -32,15 +36,16 @@ function load_level(index)
     index = index,
   }
 
-  local level_waves = levels[level.index].waves
+  local level_waves = LEVELS[level.index].waves
 
-  -- TODO: Only load this once.
-  local waves = load_json("data/waves.json")
+  if WAVES == nil then
+    WAVES = load_json("data/waves.json")
+  end
 
   level.waves = {}
 
   for i = 1, table.getn(level_waves) do
-    level.waves[i] = waves[level_waves[i]]
+    level.waves[i] = WAVES[level_waves[i]]
   end
 
   return level
