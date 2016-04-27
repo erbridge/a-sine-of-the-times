@@ -46,25 +46,39 @@ function load_level(index)
   return level
 end
 
-function transition_to_level(window, index)
-  local level = load_level(index)
+function transition_to_level(window, index, duration)
+  local hidden = true
+  local end_time = am.frame_time + duration
 
-  if level then
-    start_level(window, level, am.frame_time)
-  else
-    -- TODO: Cycle the levels? Give some sort of reward?
-    window:close()
-  end
+  window.scene:action(function(scene)
+    scene.hidden = hidden
+
+    hidden = not hidden
+
+    if am.frame_time > end_time then
+      local level = load_level(index)
+
+      if level then
+        start_level(window, level)
+      else
+        -- TODO: Cycle the levels? Give some sort of reward?
+        window:close()
+      end
+
+      return true
+    end
+  end)
 end
 
 function calculate_wave_amplitude(wave, t)
   return math.sin(2 * math.pi * wave.frequency * t + wave.phase)
 end
 
-function start_level(window, level, start_time)
+function start_level(window, level)
   log("level "..level.index..": starting")
 
-  local hold_start = nil
+  local start_time = am.frame_time
+  local hold_start_time = nil
 
   window.scene:action(function(scene)
     local t = am.frame_time - start_time
@@ -93,17 +107,17 @@ function start_level(window, level, start_time)
     end
 
     if wave_keys_held and held_keys_remaining < 1 then
-      if hold_start == nil then
-        hold_start = t
+      if hold_start_time == nil then
+        hold_start_time = t
       end
     else
-      hold_start = nil
+      hold_start_time = nil
     end
 
-    if hold_start ~= nil and t - hold_start > 1 then
+    if hold_start_time ~= nil and t - hold_start_time > 1 then
       log("level "..level.index..": complete")
 
-      transition_to_level(window, level.index + 1)
+      transition_to_level(window, level.index + 1, 1)
 
       return true
     end
@@ -113,4 +127,4 @@ end
 local window = setup_scene()
 local level = load_level(1)
 
-start_level(window, level, am.frame_time)
+start_level(window, level)
