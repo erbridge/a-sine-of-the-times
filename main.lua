@@ -142,7 +142,11 @@ function start_level(window, level)
   end)
 end
 
-local window = setup_scene()
-local level = load_level(1)
+function start_game()
+  local window = setup_scene()
+  local level = load_level(1)
 
-start_level(window, level)
+  start_level(window, level)
+end
+
+start_game()
