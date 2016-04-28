@@ -18,5 +18,21 @@
   {
     "frequency": 1,
     "phase": 0
+  },
+  {
+    "frequency": 0.05,
+    "phase": 120
+  },
+  {
+    "frequency": 2,
+    "phase": 45
+  },
+  {
+    "frequency": 0.005,
+    "phase": 0
+  },
+  {
+    "frequency": 0.5,
+    "phase": 320
   }
 ]
