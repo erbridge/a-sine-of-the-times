@@ -45,7 +45,14 @@ function load_level(index)
   end
 
   for i = 1, table.getn(level_data.waves) do
-    level.waves[i] = WAVES[level_data.waves[i]]
+    local wave_index = level_data.waves[i]
+    local wave = WAVES[wave_index]
+
+    level.waves[i] = {
+      index = wave_index,
+      frequency = wave.frequency,
+      phase = wave.phase,
+    }
   end
 
   return level
@@ -118,10 +125,12 @@ function start_level(window, level)
     local keys_down_count = table.getn(window:keys_down())
 
     for i = 1, table.getn(level.waves) do
-      if window:key_down(i) then
+      local wave = level.waves[i]
+
+      if window:key_down(wave.index) then
         keys_down_count = keys_down_count - 1
       else
-        amplitude = amplitude * calculate_wave_amplitude(level.waves[i], t)
+        amplitude = amplitude * calculate_wave_amplitude(wave, t)
       end
     end
 
