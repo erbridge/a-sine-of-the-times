@@ -12,7 +12,8 @@ end
 
 function setup_scene()
   local window = am.window{
-    title = "A Sine of the Times",
+    title = "SINE-O-TRON 3000",
+    borderless = true,
   }
 
   window.scene = am.rect(
