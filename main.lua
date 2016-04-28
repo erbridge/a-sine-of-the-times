@@ -32,20 +32,20 @@ function load_level(index)
     return nil
   end
 
+  local level_data = LEVELS[index]
+
   local level = {
     index = index,
+    solution = level_data.solution,
+    waves = {},
   }
-
-  local level_waves = LEVELS[level.index].waves
 
   if WAVES == nil then
     WAVES = load_json("data/waves.json")
   end
 
-  level.waves = {}
-
-  for i = 1, table.getn(level_waves) do
-    level.waves[i] = WAVES[level_waves[i]]
+  for i = 1, table.getn(level_data.waves) do
+    level.waves[i] = WAVES[level_data.waves[i]]
   end
 
   return level
@@ -103,25 +103,25 @@ function start_level(window, level)
   log("level "..level.index..": starting")
 
   local start_time = am.frame_time
-  local hold_start_time = nil
+  local solution_index = 1
+  local solution_length = string.len(level.solution)
+
+  local last_solution_key = nil
+  local solution_key = string.sub(
+    level.solution, solution_index, solution_index
+  )
 
   window.scene:action(function(scene)
     local t = am.frame_time - start_time
 
     local amplitude = 1
-
-    local wave_keys_held = true
-    local held_keys_remaining = table.getn(window:keys_down())
+    local keys_down_count = table.getn(window:keys_down())
 
     for i = 1, table.getn(level.waves) do
-      local wave = level.waves[i]
-
-      if window:key_down(wave.key) then
-        held_keys_remaining = held_keys_remaining - 1
+      if window:key_down(i) then
+        keys_down_count = keys_down_count - 1
       else
-        amplitude = amplitude * calculate_wave_amplitude(wave, t)
-
-        wave_keys_held = false
+        amplitude = amplitude * calculate_wave_amplitude(level.waves[i], t)
       end
     end
 
@@ -131,15 +131,32 @@ function start_level(window, level)
       scene.hidden = true
     end
 
-    if wave_keys_held and held_keys_remaining < 1 then
-      if hold_start_time == nil then
-        hold_start_time = t
-      end
-    else
-      hold_start_time = nil
+    local solution_key = string.sub(
+      level.solution, solution_index, solution_index
+    )
+
+    local err = false
+
+    if keys_down_count > 1 then
+      err = true
+    elseif window:key_pressed(solution_key) then
+      solution_index = solution_index + 1
+      last_solution_key = solution_key
+      solution_key = string.sub(
+        level.solution, solution_index, solution_index
+      )
+    elseif keys_down_count == 1 and not window:key_down(last_solution_key) then
+      err = true
     end
 
-    if hold_start_time ~= nil and t - hold_start_time > 1 then
+    if err then
+      log("level "..level.index..": failed")
+
+      -- FIXME: Differentiate this transition from the the success.
+      transition_to_level(window, level.index)
+
+      return true
+    elseif solution_index > solution_length then
       log("level "..level.index..": complete")
 
       transition_to_level(window, level.index + 1)
