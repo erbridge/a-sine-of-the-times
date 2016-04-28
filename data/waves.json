@@ -2,21 +2,26 @@
   {
     "key": "a",
     "frequency": 0.02,
-    "phase": 1
+    "phase": 90
   },
   {
     "key": "b",
     "frequency": 0.1,
-    "phase": 3
+    "phase": 270
   },
   {
     "key": "c",
     "frequency": 0.01,
-    "phase": 2
+    "phase": 180
   },
   {
     "key": "d",
     "frequency": 0.2,
-    "phase": 3
+    "phase": 270
+  },
+  {
+    "key": "e",
+    "frequency": 1,
+    "phase": 0
   }
 ]

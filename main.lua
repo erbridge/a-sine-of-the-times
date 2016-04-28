@@ -94,7 +94,9 @@ function transition_to_level(window, index)
 end
 
 function calculate_wave_amplitude(wave, t)
-  return math.sin(2 * math.pi * wave.frequency * t + wave.phase)
+  local phase = wave.phase * math.pi / 180
+
+  return math.sin(2 * math.pi * wave.frequency * t + phase)
 end
 
 function start_level(window, level)
