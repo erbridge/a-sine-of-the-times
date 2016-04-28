@@ -55,16 +55,14 @@ function end_game(window)
   window.scene.hidden = true
 end
 
-function transition_to_level(window, index)
-  local level = load_level(index)
-
+function transition_to_level(window, index, success)
   local duration = 1
+  local base_hidden_count = 1
 
-  if not level then
-    duration = 5
+  if success then
+    base_hidden_count = 5
   end
 
-  local base_hidden_count = 1
   local hidden_count = base_hidden_count
 
   local hidden = true
@@ -82,6 +80,8 @@ function transition_to_level(window, index)
     end
 
     if am.frame_time > end_time then
+      local level = load_level(index)
+
       if level then
         start_level(window, level)
       else
@@ -153,13 +153,13 @@ function start_level(window, level)
       log("level "..level.index..": failed")
 
       -- FIXME: Differentiate this transition from the the success.
-      transition_to_level(window, level.index)
+      transition_to_level(window, level.index, false)
 
       return true
     elseif solution_index > solution_length then
       log("level "..level.index..": complete")
 
-      transition_to_level(window, level.index + 1)
+      transition_to_level(window, level.index + 1, true)
 
       return true
     end
