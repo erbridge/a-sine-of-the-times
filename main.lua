@@ -162,7 +162,6 @@ function start_level(window, level)
     if err then
       log("level "..level.index..": failed")
 
-      -- FIXME: Differentiate this transition from the the success.
       transition_to_level(window, level.index, false)
 
       return true
