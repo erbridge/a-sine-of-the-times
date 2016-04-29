@@ -13,7 +13,9 @@ end
 function setup_scene()
   local window = am.window{
     title = "SINE-O-TRON 3000",
+    resizable = false,
     borderless = true,
+    lock_pointer = true,
   }
 
   window.scene = am.rect(
