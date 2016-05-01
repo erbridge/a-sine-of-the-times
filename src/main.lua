@@ -1,14 +1,5 @@
-local LEVELS = nil
-local WAVES = nil
-
-function load_json(filename)
-  local json_file = io.open(filename, "r")
-  local json = json_file:read("*all")
-
-  json_file:close()
-
-  return am.parse_json(json)
-end
+local LEVELS = require "levels"
+local WAVES = require "waves"
 
 function setup_scene()
   local window = am.window{
@@ -27,10 +18,6 @@ function setup_scene()
 end
 
 function load_level(index)
-  if LEVELS == nil then
-    LEVELS = load_json("data/levels.json")
-  end
-
   if index > table.getn(LEVELS) then
     return nil
   end
@@ -42,10 +29,6 @@ function load_level(index)
     solution = level_data.solution,
     waves = {},
   }
-
-  if WAVES == nil then
-    WAVES = load_json("data/waves.json")
-  end
 
   for i = 1, table.getn(level_data.waves) do
     local wave_index = level_data.waves[i]
